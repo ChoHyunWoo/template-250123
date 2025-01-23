@@ -2,6 +2,8 @@ package com.example.template.domain.post.post.controller;
 
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
 import org.hibernate.validator.constraints.Length;
 import org.springframework.stereotype.Controller;
 import org.springframework.validation.annotation.Validated;
@@ -18,18 +20,25 @@ public class PostController {
         return getFormHtml("");
     }
 
+    @AllArgsConstructor
+    @Getter
+    public static class WriteForm {
+        @NotBlank(message = "제목을 입력해주세요.") @Length(min = 5, message = "제목은 5글자 이상입니다.")
+        private String title;
+        @NotBlank(message = "내용을 입력해주세요.") @Length(min = 10, message = "내용은 10글자 이상입니다.")
+        private String content;
+    }
+
     @PostMapping("/write")
     @ResponseBody
-    public String doWrite(
-            @NotBlank @Length(min=5) String title,
-            @NotBlank @Length(min=10) String content
-    ) {
+    public String doWrite(@ModelAttribute @Validated WriteForm form) {
+
 
         return """
                 <h1>게시물 조회</h1>
                 <div>%s</div>
                 <div>%s</div>
-                """.formatted(title, content);
+                """.formatted(form.title, form.content);
     }
 
 
